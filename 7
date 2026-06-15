@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Vendas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: #007bff;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-left: 5px solid #28a745;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .result-box p {
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 1.05rem;
+        }
+
+        .result-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Sistema de Vendas</h2>
+    
+    <div class="form-group">
+        <label for="preco">Preço de Etiqueta (R$):</label>
+        <input type="number" id="preco" placeholder="Ex: 100.00" min="0" step="0.01" required>
+    </div>
+
+    <div class="form-group">
+        <label for="condicao">Condição de Pagamento:</label>
+        <select id="condicao">
+            <option value="a">a) À vista em dinheiro ou cheque (-10%)</option>
+            <option value="b">b) À vista no cartão de crédito (-15%)</option>
+            <option value="c">c) Em duas vezes (Preço normal sem juros)</option>
+            <option value="d">d) Em duas vezes (Preço normal + 10% juros)</option>
+        </select>
+    </div>
+
+    <button onclick="calcularTotal()">Calcular Total</button>
+
+    <div id="resultado" class="result-box">
+        <p id="desc-condicao"></p>
+        <p>Valor Final: <span id="valor-final" class="highlight"></span></p>
+        <p id="detalhe-parcela"></p>
+    </div>
+</div>
+
+<script>
+    function calcularTotal() {
+        // Captura os elementos e valores informados pelo usuário
+        const precoInput = document.getElementById('preco').value;
+        const condicao = document.getElementById('condicao').value;
+        const resultadoDiv = document.getElementById('resultado');
+        
+        const descCondicao = document.getElementById('desc-condicao');
+        const valorFinalSpan = document.getElementById('valor-final');
+        const detalheParcela = document.getElementById('detalhe-parcela');
+
+        // Validação simples para garantir que um valor foi digitado
+        if (!precoInput || precoInput <= 0) {
+            alert("Por favor, insira um preço de etiqueta válido.");
+            return;
+        }
+
+        const precoEtiqueta = parseFloat(precoInput);
+        let valorFinal = 0;
+        let textoDescricao = "";
+        let textoParcela = "";
+
+        // Regras de negócio baseadas na tabela da imagem
+        switch (condicao) {
+            case 'a':
+                valorFinal = precoEtiqueta * 0.90; // 10% de desconto
+                textoDescricao = "Condição: À vista em dinheiro ou cheque (10% de desconto).";
+                textoParcela = "Pago em parcela única.";
+                break;
+            case 'b':
+                valorFinal = precoEtiqueta * 0.85; // 15% de desconto
+                textoDescricao = "Condição: À vista no cartão de crédito (15% de desconto).";
+                textoParcela = "Pago em parcela única.";
+                break;
+            case 'c':
+                valorFinal = precoEtiqueta; // Preço normal
+                textoDescricao = "Condição: Em duas vezes sem juros.";
+                textoParcela = `2 parcelas de R$ ${(valorFinal / 2).toFixed(2)}`;
+                break;
+            case 'd':
+                valorFinal = precoEtiqueta * 1.10; // 10% de juros
+                textoDescricao = "Condição: Em duas vezes com juros de 10%.";
+                textoParcela = `2 parcelas de R$ ${(valorFinal / 2).toFixed(2)}`;
+                break;
+            default:
+                alert("Condição inválida.");
+                return;
+        }
+
+        // Atualiza a interface gráfica com os resultados formatados em moeda nacional
+        descCondicao.innerText = textoDescricao;
+        valorFinalSpan.innerText = `R$ ${valorFinal.toFixed(2)}`;
+        detalheParcela.innerText = textoParcela;
+
+        // Torna a caixa de resultados visível
+        resultadoDiv.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
