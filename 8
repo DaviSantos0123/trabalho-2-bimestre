@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pagamentos - Escola</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            border-color: #3498db;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #e8f4fd;
+            border-left: 5px solid #3498db;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .result-box h3 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .result-box p {
+            color: #27ae60;
+            font-size: 22px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Calculadora de Salário</h2>
+        
+        <div class="form-group">
+            <label for="nivel">Nível do Professor:</label>
+            <select id="nivel">
+                <option value="12">Nível 1 - R$ 12,00 / hora</option>
+                <option value="17">Nível 2 - R$ 17,00 / hora</option>
+                <option value="25">Nível 3 - R$ 25,00 / hora</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="horas">Quantidade de horas/aula na semana:</label>
+            <input type="number" id="horas" min="1" placeholder="Ex: 20" required>
+        </div>
+
+        <button onclick="calcularSalario()">Calcular Salário</button>
+
+        <div class="result-box" id="resultadoContainer">
+            <h3>Salário Mensal Estimado:</h3>
+            <p id="salarioResultado">R$ 0,00</p>
+        </div>
+    </div>
+
+    <script>
+        function calcularSalario() {
+            // Obtém os valores dos inputs
+            const valorHoraAula = parseFloat(document.getElementById('nivel').value);
+            const qtdAula = parseFloat(document.getElementById('horas').value);
+            const resultadoContainer = document.getElementById('resultadoContainer');
+            const salarioResultado = document.getElementById('salarioResultado');
+
+            // Validação simples para garantir que as horas foram digitadas
+            if (isNaN(qtdAula) || qtdAula <= 0) {
+                alert("Por favor, insira uma quantidade válida de horas/aula.");
+                return;
+            }
+
+            // Aplica a fórmula fornecida na imagem: sal = valorHoraAula * qtdAula * 4.5
+            const salario = valorHoraAula * qtdAula * 4.5;
+
+            // Formata o valor para a moeda local (Real - R$)
+            const salarioFormatado = salario.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+
+            // Exibe o resultado na tela com efeito visual
+            salarioResultado.innerText = salarioFormatado;
+            resultadoContainer.style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
